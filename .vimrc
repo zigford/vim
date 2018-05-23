@@ -8,6 +8,8 @@ if has("win32")                               " Check if we are on windows. Also
     set directory=~/_vimtmp,.                 " Set dir for swp files rather than leaving swl files all over the fs
     set undodir=$HOME/vimfiles/VIM_UNDO_FILES " Set were persistent undo files are stored
     let home='~/.vim'                         " Setup a variable used later to store plugins
+    set shell=powershell                      " Set Shell to powershell on windows
+    set shellcmdflag=-command                 " Arg for powrshell to run commands
 else
     set backupdir=~/.vimtmp,.
     set directory=~/.vimtmp,.
@@ -19,7 +21,6 @@ else
         let home='/mnt/c/Users/jpharris/.vim'
     endif
 endif
-
                                               " Remove menu bars
 if has("gui_running")                         " Options for gvim only
     set guioptions -=m                        " Disable menubar
@@ -40,8 +41,7 @@ colorscheme evening                           " Set the default colorscheme
                                               " Attempt to start vim-plug
 execute "source " . home . "/autoload/plug.vim"
 if exists('*plug#begin')
-    call plug#begin(home . '/plugged')
-                                              " Enable the following plugins
+    call plug#begin(home . '/plugged')        " Enable the following plugins
     Plug 'tpope/vim-fugitive'
     Plug 'junegunn/gv.vim'
     Plug 'junegunn/vim-easy-align'
@@ -56,19 +56,18 @@ if exists('*plug#begin')
     call plug#end()
 endif
 
-                                              " show existing tab with 4 spaces width
-set tabstop=4
-                                              " when indenting with '>', use 4 spaces width
-set shiftwidth=4
-                                              " On pressing tab, insert 4 spaces
-set expandtab
-set number
-                                              " set shell=powershell
-                                              " set shellcmdflag=-command
-                                              " Map F5 to python.exe %=current file
+syntax on                                     " Enable syntax highlighting
+filetype plugin indent on                     " Enable plugin based auto indent
+set tabstop=4                                 " show existing tab with 4 spaces width
+set shiftwidth=4                              " when indenting with '>', use 4 spaces width
+set expandtab                                 " On pressing tab, insert 4 spaces
+set number                                    " Show line numbers
+
+" Map F5 to python.exe %=current file
 nnoremap <silent> <F5> :!clear;python %<CR>
-syntax on
-filetype plugin indent on
+" Remap tab to auto complete 
 imap <C-@> <C-Space>
+" Setup ga shortcut for easyaline in visual mode
 nmap ga <Plug>(EasyAlign)
+" Setup ga shortcut for easyaline in normal mode
 xmap ga <Plug>(EasyAlign)
