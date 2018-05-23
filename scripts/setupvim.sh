@@ -7,17 +7,10 @@ which curl || sudo apt-get install curl -y
 
 which vim || sudo apt-get install vim -y
 
-# install pathogen
-mkdir -p ~/.vim/autoload ~/.vim/bundle && \
-curl -LSso ~/.vim/autoload/pathogen.vim https://tpo.pe/pathogen.vim
+# install vim-plug
+if ! test -f ~/.vim/autoload/plug.vim; then 
+    curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
+        https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+fi
 
-# install auto-pairs
-git clone git://github.com/jiangmiao/auto-pairs.git ~/.vim/bundle/auto-pairs
-
-# install 
-
-cat << EOF > ~/.vimrc
-execute pathogen#infect()
-syntax on
-filetype plugin indent on
-EOF
+cp -f ../.vimrc ~/.vimrc

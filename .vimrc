@@ -18,7 +18,11 @@ else
     if uname =~ "Darwin"                      " If MacOS
         let home='~/.vim'
     else
-        let home='/mnt/c/Users/jpharris/.vim'
+        if exists('/mnt/c/Users/jpharris')
+            let home='/mnt/c/Users/jpharris/.vim'
+        else
+            let home='~/.vim'
+        endif
     endif
 endif
                                               " Remove menu bars
