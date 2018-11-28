@@ -6,6 +6,7 @@ $VPlugP = "$Env:userprofile\vimfiles\autoload\plug.vim"
 $ErrorActionPreference="SilentlyContinue"
 if (!(get-command git)) { choco install git -y }
 if (!(get-command vim)) { choco install vim -y }
+choco install firacode -y
 
 # install vim-plug
 if (!(Test-Path -Path $VPlugP)) {
