@@ -20,4 +20,4 @@ if ! test -f ~/.vim/autoload/plug.vim; then
         https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 fi
 
-ln -s $(gfilepath ../.vimrc) ~/.vimrc
+ln -s "$(gfilepath ../.vimrc)" ~/.vimrc
