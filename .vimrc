@@ -38,28 +38,25 @@ noremap ga <Plug>(EasyAlign)
 " Setup ga shortcut for easyaline in normal mode
 xnoremap ga <Plug>(EasyAlign)
 " xml folding
+nmap gd <Plug>(ale_detail)
 let g:table_mode_corner='|'
 let g:ale_completion_enabled = 1
-let g:airline#extensions#ale#enabled = 1
+let g:ale_set_quickfix = 1
 execute "source " . plug . "/autoload/plug.vim"
 if exists('*plug#begin')
     call plug#begin(plug . '/plugged')        " Enable the following plugins
-"    Plug 'tpope/vim-fugitive'
-"    Plug 'junegunn/gv.vim'
-"    Plug 'junegunn/vim-easy-align'
-"    Plug 'jiangmiao/auto-pairs'
-"    Plug 'vim-airline/vim-airline'
-"    Plug 'morhetz/gruvbox'
-"    Plug 'ervandew/supertab'
-"    Plug 'dhruvasagar/vim-table-mode'
-"    Plug 'w0rp/ale'
-"    Plug 'tomtom/tlib_vim'
-"    Plug 'MarcWeber/vim-addon-mw-utils'
-"    Plug 'chrisbra/csv.vim'
-"    Plug 'PProvost/vim-ps1'
-"    Plug 'garbas/vim-snipmate'
-"    Plug 'honza/vim-snippets'
-"    Plug 'wesQ3/vim-windowswap'
+    Plug 'tpope/vim-fugitive'
+    Plug 'junegunn/gv.vim'
+    Plug 'junegunn/vim-easy-align'
+    Plug 'jiangmiao/auto-pairs'
+    Plug 'dhruvasagar/vim-table-mode'
+    Plug 'w0rp/ale'
+    Plug 'tomtom/tlib_vim'
+    Plug 'MarcWeber/vim-addon-mw-utils'
+    Plug 'chrisbra/csv.vim'
+    Plug 'PProvost/vim-ps1'
+    Plug 'garbas/vim-snipmate'
+    Plug 'honza/vim-snippets'
     call plug#end()
 endif
 " }}}
@@ -75,31 +72,23 @@ if has("gui_running")                         " Options for gvim only
     elseif os =~ "mac"
         set guifont=FiraCode-Regular:h16
     else
+        " Prolly windows
         set guifont=Fira_Code_Retina:h12:cANSI:qDRAFT 
         set renderoptions=type:directx
         set encoding=utf-8
     endif
-    set background=dark
-    colorscheme dark_mode                       " Set the default colorscheme
 else
     set mouse=a
     if has('termguicolors')
         if os =~ "mac"
             " tgc doesn't seem to work in terminal.app
-            set background=dark
-            colorscheme dark_mode                   " Set the default colorscheme
         else
             set termguicolors                     " Enable termguicolors for consoles which support 256.
-            set background=dark
-            colorscheme default                   " Set the default colorscheme
-        endif
-    else
-        if os =~ "mac"
-            set background=dark
-            colorscheme gruvbox                   " Set the default colorscheme
         endif
     endif
 endif
+set background=dark
+colorscheme dark_mode                   " Set the default colorscheme
 " }}}
 
 " Default settings {{{
@@ -115,14 +104,19 @@ set number                                    " Show line numbers
 set nowrap                                    " don't wrap text
 set showmatch                                 " make code matches easier to see
 set shiftround                                " indents are always right
-let mapleader = ","
-set statusline=%m{%n}%f\ %y\ %l/%L\ %c
+let mapleader=","
+set statusline=buf:%n\ %m%.12f\ %y\ lin:%l/%L\ col:%c%=%m
 set laststatus=2
-" let maplocalleader=","
+let maplocalleader=","
 " }}}
 
 " Auto Cmds {{{
 
+augroup ALE
+    autocmd!
+    autocmd FileType ale-preview setlocal wrap
+augroup END
+augroup markdown
 augroup XML
     autocmd!
     autocmd FileType xml setlocal foldmethod=indent foldlevelstart=999 foldminlines=0
@@ -143,10 +137,18 @@ augroup markdown
 augroup END
 augroup vimrc
     autocmd!
-    autocmd BufReadPre .vimrc setlocal foldmethod=marker
     autocmd BufWritePost .vimrc source ~/.vimrc
 augroup END
-
+augroup vim
+    autocmd FileType vim setlocal foldmethod=marker
+    autocmd FileType vim nnoremap <localleader>ll :exe getline(".")<CR>|          " Execute the selected line as vimscript
+    autocmd FileType vim nnoremap <localleader>gg :source %<CR>|          " Execute the selected line as vimscript
+augroup END
+augroup aledebug
+    autocmd!
+    autocmd BufReadPre ps1.vim nnoremap <localleader>dd :call ale#debugging#Info()<cr>
+    autocmd BufReadPre psscriptanalyzer.vim nnoremap <localleader>dd :call ale#debugging#Info()<cr>
+augroup END
 "}}}
 
 " Special functions {{{
@@ -172,9 +174,9 @@ nnoremap <leader>, ,|                         " remap leader+, to ,
 nnoremap <Space> <PageDown>|
 inoremap <c-u> <esc>viwUwa|                   " Map Ctrl+u to uppercase current word in insertmode
 nnoremap <c-u> viwU|                          " Map Ctrl+u to uppercase current word in normalmode
-nnoremap <F2> :exe getline(".")<CR>|          " Execute the selected line as vimscript
 nnoremap <leader>ev :vsplit $MYVIMRC<CR>|     " Edit VimRC in a v split
-nnoremap <leader>lv :source $MYVIMRC<CR>|     " Reload VimRC
+nnoremap <leader>vs :execute "rightbelow vsplit " . bufname("#")<CR>
+nnoremap <leader>sp :execute "rightbelow split " . bufname("#")<CR>
 " Remap tab to auto complete 
 inoremap <C-@> <C-Space>
 " Add double quotes to the current word
@@ -188,10 +190,17 @@ vnoremap <esc> <nop>
 nnoremap <leader>" viw<esc>a"<esc>hbi"<esc>lel
 " surround current visual in single quotes
 nnoremap <leader>' <esc>`<i'<esc>`>la'<esc>
+inoremap <leader>~~ <esc>`<i~~<esc>`>la~~<esc>
 " disable arrows in normal mode
 noremap <Left> <nop>
 noremap <Right> <nop>
 noremap <Up> <nop>
 noremap <Down> <nop>
 onoremap in@ :<c-u>execute "normal! :set iskeyword+=.\r?[a-zA-Z.]\\+@[a-zA-Z.]\\+\rvwe"<cr>
+" moving around in windows:
+nnoremap <c-k> <c-w>k
+nnoremap <c-j> <c-w>j
+nnoremap <c-l> <c-w>l
+nnoremap <c-h> <c-w>h
+nnoremap <c-c> <c-w>c
 "}}}
