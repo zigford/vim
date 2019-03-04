@@ -9,8 +9,8 @@ if has("win32")                               " Check if we are on windows. Also
     set directory=~/_vimtmp,.                 " Set dir for swp files rather than leaving swl files all over the fs
     set undodir=$USERPROFILE/vimfiles/VIM_UNDO_FILES " Set were persistent undo files are stored
     let plug='$USERPROFILE/vimfiles'          " Setup a variable used later to store plugins
-    set shell=powershell                      " Set Shell to powershell on windows
-    set shellcmdflag=-command                 " Arg for powrshell to run commands
+"    set shell=powershell                      " Set Shell to powershell on windows
+"    set shellcmdflag=-command                 " Arg for powrshell to run commands
 else
     set backupdir=~/.vimtmp,.
     set directory=~/.vimtmp,.
@@ -38,22 +38,25 @@ noremap ga <Plug>(EasyAlign)
 " Setup ga shortcut for easyaline in normal mode
 xnoremap ga <Plug>(EasyAlign)
 " xml folding
-nmap gd <Plug>(ale_detail)
+nmap <leader>gd <Plug>(ale_detail)
 let g:table_mode_corner='|'
 let g:ale_completion_enabled = 1
 let g:ale_set_quickfix = 1
+let g:ale_linter_aliases = {'ps1': 'powershell',}
+let g:ale_powershell_psscriptanalyzer_executable = 'powershell.exe'
 execute "source " . plug . "/autoload/plug.vim"
 if exists('*plug#begin')
     call plug#begin(plug . '/plugged')        " Enable the following plugins
-    Plug 'tpope/vim-fugitive'
-    Plug 'junegunn/gv.vim'
-    Plug 'junegunn/vim-easy-align'
+"    Plug 'tpope/vim-fugitive'
+"    Plug 'junegunn/gv.vim'
+"    Plug 'junegunn/vim-easy-align'
     Plug 'jiangmiao/auto-pairs'
-    Plug 'dhruvasagar/vim-table-mode'
-    Plug 'w0rp/ale'
+"    Plug 'dhruvasagar/vim-table-mode'
+    Plug 'zigford/ale'
+"    Plug 'w0rp/ale'
     Plug 'tomtom/tlib_vim'
     Plug 'MarcWeber/vim-addon-mw-utils'
-    Plug 'chrisbra/csv.vim'
+"    Plug 'chrisbra/csv.vim'
     Plug 'PProvost/vim-ps1'
     Plug 'garbas/vim-snipmate'
     Plug 'honza/vim-snippets'
@@ -125,10 +128,11 @@ augroup HTML
     autocmd!
     autocmd FileType *html nnoremap <buffer> <localleader>f Vatzf
 augroup END
-augroup PS1
+augroup POWERSHELL
     autocmd!
-    autocmd FileType ps1 onoremap fn :<c-u>execute "normal! /[Ff]unction\r:nohlsearch\rV%"<cr>
-    autocmd FileType ps1 onoremap FN :<c-u>execute "normal! ?[Ff]unction\r:nohlsearch\rV%"<cr>
+"    autocmd BufNewFile,BufRead *.ps1 setlocal ft=powershell
+"    autocmd FileType powershell onoremap fn :<c-u>execute "normal! /[Ff]unction\r:nohlsearch\rV%"<cr>
+    autocmd FileType powershell onoremap FN :<c-u>execute "normal! ?[Ff]unction\r:nohlsearch\rV%"<cr>
 augroup END
 augroup markdown
     autocmd!
@@ -146,8 +150,7 @@ augroup vim
 augroup END
 augroup aledebug
     autocmd!
-    autocmd BufReadPre ps1.vim nnoremap <localleader>dd :call ale#debugging#Info()<cr>
-    autocmd BufReadPre psscriptanalyzer.vim nnoremap <localleader>dd :call ale#debugging#Info()<cr>
+    autocmd BufRead ps1.vim nnoremap <localleader>da :call ale#debugging#Info()<cr>
 augroup END
 "}}}
 
@@ -175,6 +178,8 @@ nnoremap <Space> <PageDown>|
 inoremap <c-u> <esc>viwUwa|                   " Map Ctrl+u to uppercase current word in insertmode
 nnoremap <c-u> viwU|                          " Map Ctrl+u to uppercase current word in normalmode
 nnoremap <leader>ev :vsplit $MYVIMRC<CR>|     " Edit VimRC in a v split
+nnoremap <leader>ea :vsplit ~\vimfiles\plugged\ale\ale_linters\powershell\psscriptanalyzer.vim<CR>|     " Edit VimRC in a v split
+nnoremap <localleader>da :call ale#debugging#Info()<cr>
 nnoremap <leader>vs :execute "rightbelow vsplit " . bufname("#")<CR>
 nnoremap <leader>sp :execute "rightbelow split " . bufname("#")<CR>
 " Remap tab to auto complete 
