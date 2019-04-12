@@ -14,8 +14,11 @@ if (!(Test-Path -Path $VPlugP)) {
     Invoke-WebRequest -Uri $VPlugURL -OutFile $VPlugP
 }
 
-if (Test-Path ..\.vim) {
-    Copy-Item -Recurse ..\.vim\* ~\vimfiles
+if (Test-Path ..\vimfiles) {
+    If (-Not (Test-Path -Path ~\vimfiles)) {
+        New-Item -ItemType Directory -Path $HOME -Name vimfiles
+    }
+    Copy-Item -Recurse ..\vimfiles\* ~\vimfiles -Force
 }
 
-Copy-Item -Force ..\.vimrc ~\_vimrc
+Copy-Item -Force ..\_vimrc ~\_vimrc

@@ -90,7 +90,7 @@ hi Constant guifg=#838383 guibg=#222222 guisp=#222222 gui=bold ctermfg=8 ctermbg
 hi Tag guifg=#868585 guibg=NONE guisp=NONE gui=NONE ctermfg=102 ctermbg=NONE cterm=NONE
 hi String guifg=#838383 guibg=NONE guisp=NONE gui=NONE ctermfg=8 ctermbg=NONE cterm=NONE
 hi PMenuThumb guifg=#cccccc guibg=#777777 guisp=#777777 gui=NONE ctermfg=252 ctermbg=243 cterm=NONE
-hi MatchParen guifg=#000000 guibg=#a8a8a8 guisp=#a8a8a8 gui=bold ctermfg=NONE ctermbg=248 cterm=bold
+hi MatchParen guifg=#000000 guibg=#808080 guisp=#808080 gui=bold ctermfg=NONE ctermbg=238 cterm=bold
 hi Repeat guifg=#eeeeee guibg=NONE guisp=NONE gui=bold ctermfg=255 ctermbg=NONE cterm=bold
 hi SpellBad guifg=NONE guibg=#000000 guisp=#000000 gui=NONE ctermfg=NONE ctermbg=NONE cterm=NONE
 hi Directory guifg=#929292 guibg=#000000 guisp=#000000 gui=NONE ctermfg=246 ctermbg=NONE cterm=NONE
