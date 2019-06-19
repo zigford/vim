@@ -59,6 +59,9 @@ function New-SymbolicLink {
 	}
 }
 
+Push-Location
+Set-Location (Split-Path -Path $PSScriptRoot -Parent)
+
 if (-Not (Test-Path "${VIMFILES}")) {
     New-Item -ItemType Directory -Path $VIMFILES
 }
@@ -73,3 +76,5 @@ if ((Test-Path _vimrc) -and (-Not (Test-Path "${VIMRC}"))) {
 if (-Not (Test-Path "${HOME}/.vimtmp")) {
     New-Item -ItemType Directory -Path $HOME -Name .vimtmp
 }
+
+Pop-Location
