@@ -76,8 +76,4 @@ if ((Test-Path _vimrc) -and (-Not (Test-Path "${VIMRC}"))) {
     New-SymbolicLink (Get-Item _vimrc).FullName "$VIMRC"
 } else {"No"}
 
-if (-Not (Test-Path "${HOME}/.vimtmp")) {
-    New-Item -ItemType Directory -Path $HOME -Name .vimtmp
-}
-
 Pop-Location
