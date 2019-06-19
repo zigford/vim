@@ -1,31 +1,37 @@
 " Platform code {{{
+let s:home = $HOME                   " Setting a custom variable for home
+                                     " so that on WSL we can user the Windows
+                                     " home.
 if has('win32')                      " Check if we are on windows.
                                      " Also supports has(unix)
     let s:os='win'                   " Set os var to win for later use
-    set noendofline                  " Don't add an extra spare line at the end of each file
-    set nofixeol                     " Disable the fixeol : Not really sure why this is needed
-    let s:plug='$USERPROFILE/vimfiles' " Setup a variable used later to store plugins
-"    set shell=powershell            " Set Shell to powershell on windows
-"    set shellcmdflag=-command       " Arg for powrshell to run commands
+    set noendofline                  " Don't add an extra spare line at the
+                                     " end of each file
+    set nofixeol                     " Disable the fixeol : Not really sure
+                                     " why this is needed
 else
-    set undodir=$HOME/.vimundo
-    let s:plug ='~/.vim'
     let s:uname = system('uname')    " Check which variant of Unix we are running Linux|Macos
-    if s:uname =~# 'Darwin'             " If MacOS
-        let s:os='mac'
-    else
-        if isdirectory('/mnt/c/Users/jpharris/.vim')
-            let s:plug='/mnt/c/Users/jpharris/.vim'
-            let s:os='wsl'
-        else
-            let s:os='lin'
-        endif
+    let s:os=(s:uname=~#'Darwin') ? 'macos' : 'lin'
+    let s:WU ='jpharris'
+    let s:WSL='/mnt/c/Users/'.s:WU
+    if isdirectory(s:WSL) 
+        let s:home = '/mnt/c/Users/'.s:WU
     endif
 endif
 
-set backupdir=~/_vimtmp,~/.vimtmp,.                 " Set a single backupdir rather than leaving backup files all over the fs
-set directory=~/_vimtmp,~/.vimtmp,.                 " Set dir for swp files rather than leaving swl files all over the fs
-set undodir=~/vimundo,~/.vimundo,.                  " Set were persistent undo files are stored
+let s:vo = s:home . "/.vimother/"
+if !isdirectory(s:vo . "tmp")
+    call mkdir(s:vo . "tmp", "p")
+    call mkdir(s:vo . "undo", "p")
+    call mkdir(s:vo . "views", "p")
+    call mkdir(s:vo . "plug", "p")
+endif
+let &backupdir = s:vo . "tmp"        " Set a single backupdir rather than leaving backup files all over the fs
+let &directory = s:vo . "tmp"        " Set dir for swp files rather than leaving swl files all over the fs
+let &undodir = s:vo . "undo"         " Set were persistent undo files are stored
+let &viewdir = s:vo . "views"
+let &viminfofile = s:vo . "viminfo"
+let s:plug = s:vo . 'plug'
 " }}}
 
 " Vimplug {{{
@@ -40,29 +46,31 @@ let g:table_mode_corner='|'
 let g:ale_completion_enabled = 1
 let g:ale_set_quickfix = 1
 let g:ale_linter_aliases = {'ps1': 'powershell'}
+"let g:ale_linters = {'powershell': ['psscriptanalyzer']}
+let g:ale_linters = {'powershell': ['powershell']}
 if s:os=~#'win'
-    let g:ale_powershell_psscriptanalyzer_executable = 'pwsh.exe'
-    let g:ale_powershell_powershell_executable = 'pwsh.exe'
+    let g:ale_powershell_psscriptanalyzer_executable = 'powershell.exe'
+    let g:ale_powershell_powershell_executable = 'powershell.exe'
 endif
-execute 'source ' . s:plug . '/autoload/plug.vim'
+execute 'source ' . split(&rtp, ',')[0] . '/autoload/plug.vim'
 if exists('*plug#begin')
-    call plug#begin(s:plug . '/plugged')        " Enable the following plugins
+    call plug#begin(s:plug)        " Enable the following plugins
     Plug 'tpope/vim-fugitive'
     Plug 'junegunn/gv.vim'
     Plug 'junegunn/vim-easy-align'
-"    Plug 'jiangmiao/auto-pairs'
     Plug 'dhruvasagar/vim-table-mode'
-"    Plug 'w0rp/ale'
     Plug 'zigford/ale'
     Plug 'tomtom/tlib_vim'
+    Plug 'gruvbox-community/gruvbox'
+"    Plug 'neoclide/coc.nvim', {'tag': '*', 'do': './install.sh'}
     Plug 'MarcWeber/vim-addon-mw-utils'
     Plug 'chrisbra/csv.vim'
-    Plug 'PProvost/vim-ps1'
+    Plug 'zigford/vim-powershell'
     Plug 'garbas/vim-snipmate'
     Plug 'honza/vim-snippets'
     call plug#end()
 endif
-set rtp+=/usr/local/opt/fzf
+"set rtp+=/usr/local/opt/fzf
 
 " }}}
 
@@ -70,16 +78,19 @@ set rtp+=/usr/local/opt/fzf
 if has('gui_running')                         " Options for gvim only
     set guioptions -=m                        " Disable menubar
     set guioptions -=T                        " Disable Status bar
-    set lines=45                              " Set default amount of lines
-    set columns=84                           " Set default amount of columns
+    if ! exists("g:linesset")
+        let g:linesset = "yes"
+        set lines=50                              " Set default amount of lines
+        set columns=90                            " Set default amount of columns
+    endif
     if s:os =~# 'lin'
         set guifont=Fira\ Code\ 12
     elseif s:os =~# 'mac'
         set guifont=FiraCode-Regular:h14
     else
         " Prolly windows
-        "set guifont=Fira_Code_Retina:h14:cANSI:qDRAFT 
-        set guifont=Lucida_Console:h11:cANSI:qDRAFT 
+        set guifont=Fira_Code:h11:cANSI:qDRAFT 
+        "set guifont=Lucida_Console:h11:cANSI:qDRAFT 
         set renderoptions=type:directx
         set encoding=utf-8
     endif
@@ -95,8 +106,25 @@ else
         "set t_te=[H[2J
     endif
 endif
-colorscheme dark_mode                   " Set the default colorscheme
-set background=dark
+
+" The following is a bit of vimscript to set the colorscheme based on
+" time of day
+
+let s:time = has('win32') ? system('time /t') : system('date "+%I:%M %p"')
+" logic to handle day/night
+let s:hour = split(s:time, ':')[0]
+let s:PM   = split(s:time)[1]
+
+if (s:PM ==? 'PM' && 
+ \ (s:hour > 7 && s:hour != 12)) ||
+ \ (s:PM ==? 'AM' &&
+ \ (s:hour < 8 || s:hour == 12))              " Between 8pm and 8am is night
+    set background=dark
+else
+    set background=light
+endif
+colorscheme gruvbox
+"colorscheme dark_mode
 " }}}
 
 " Default settings {{{
@@ -113,18 +141,23 @@ set nowrap                                    " don't wrap text
 set showmatch                                 " make code matches easier to see
 set shiftround                                " indents are always right
 let mapleader=","
-set statusline=buf:%n\ %m%.12f\ %y\ lin:%l/%L\ col:%c%=%m
+set statusline=buf:%n\ %m%.25f\ %y\ lin:%l/%L\ col:%c%=%m
 set laststatus=2
 let maplocalleader=","
 " }}}
 
 " Auto Cmds {{{
-
+augroup All
+    autocmd!
+"    autocmd VimEnter * colorscheme gruvbox
+"    autocmd VimEnter call * libcallnr("gvimborder.dll", "SetBorder", 0x080808)
+    autocmd BufWinLeave * silent! mkview
+    autocmd BufWinEnter * silent! loadview
+augroup END
 augroup ALE
     autocmd!
     autocmd FileType ale-preview setlocal wrap
 augroup END
-augroup markdown
 augroup XML
     autocmd!
     autocmd FileType xml setlocal foldmethod=indent foldlevelstart=999 foldminlines=0
@@ -142,6 +175,25 @@ augroup PS1
     autocmd FileType ps1 vnoremap cx :norm x<CR>
     autocmd FileType ps1 onoremap fn :<c-u>execute "normal! /[Ff]unction\r:nohlsearch\rV%"<cr>
     autocmd FileType ps1 onoremap FN :<c-u>execute "normal! ?[Ff]unction\r:nohlsearch\rV%"<cr>
+    autocmd FileType ps1 xnoremap <F8> y<C-W>w<C-W>"0<C-W>w
+    autocmd FileType ps1 nnoremap <leader>fn y<C-W>w<C-W>"0<C-W>w
+    "autocmd FileType ps1 nnoremap <F5> call term_sendkeys(9, '& "%"<CR>')
+    autocmd FileType ps1 iabbrev <buffer> gci Get-ChildItem
+    autocmd FileType ps1 iabbrev <buffer> % ForEach-Object
+    autocmd FileType ps1 iabbrev <buffer> ? Where-Object
+    autocmd FileType ps1 iabbrev <buffer> gc Get-Content
+    "autocmd FileType ps1 iabbrev for for ($i=0; $i -lt 10; $i++) {<cr>
+"    if has('win32')
+"        autocmd FileType ps1 set makeprg=pwsh\ -command\ \"&{trap{$_.tostring();continue}&{$c=gc\ '%';$c=[string]::join([environment]::newline,$c);[void]$executioncontext.invokecommand.newscriptblock($c)}}\"
+"    else
+"        autocmd FileType ps1 set makeprg=pwsh\ -command\ \"&{
+"            \trap{\\$_.tostring\();continue}&{
+"            \\\$c=gc\ '%';
+"            \\\$c=[string]::join([environment]::newline,\\$c);
+"            \[void]\\$executioncontext.invokecommand.newscriptblock(\\$c)}
+"        \}\"
+"    endif
+"    autocmd FileType ps1 set errorformat=%EAt\ line:%l\ char:%c,%-C+%.%#,%Z%m,%-G\\s%#
 augroup END
 augroup ps1test
     autocmd!
@@ -149,8 +201,17 @@ augroup ps1test
 augroup END
 augroup markdown
     autocmd!
+    autocmd FileType markdown setlocal textwidth=80 spell spelllang=en_au
     autocmd FileType markdown onoremap ih :<c-u>execute "normal! ?^[=-][=-]\\+$\r:nohlsearch\rkvg_"<cr>
     autocmd FileType markdown onoremap ah :<c-u>execute "normal! ?^[=-][=-]\\+$\r:nohlsearch\rg_vk0"<cr>
+    autocmd FileType markdown iabbrev vi <div id="video"><cr><tab><video width="100%" controls>
+            \<cr><tab><source src="https://f002.backblazeb2.com/file/BlogVideos/.mp4"
+            \type="video/mp4">
+            \<cr><tab><tab>Your browser does not support the video tag.
+            \<cr><tab></video><cr></div><cr><cr>
+            \You can download the file by right clicking [here][1] and click 'save-as'
+    autocmd FileType markdown iabbrev sig If you have and corrections or memories I can add to this post
+            \, please email<cr>me at jesse@zigford.org
 augroup END
 augroup vimrc
     autocmd!
@@ -167,6 +228,13 @@ augroup aledebug
     autocmd BufReadPre ps1.vim nnoremap <localleader>dd :call ale#debugging#Info()<cr>
     autocmd BufReadPre psscriptanalyzer.vim nnoremap <localleader>dd :call ale#debugging#Info()<cr>
 augroup END
+augroup JSON
+    autocmd!
+    autocmd BufRead *.json set ft=json
+    autocmd FileType json :execute ":%! python -m json.tool\r"
+    autocmd FileType json setlocal foldmethod=syntax shiftwidth=2 tabstop=2
+    autocmd FileType json nnoremap <localleader>f :%! python -m json.tool<CR>
+augroup END
 augroup email
     autocmd!
     autocmd BufRead mutt-* setlocal spell
@@ -174,17 +242,6 @@ augroup email
                 \ formatoptions+=w
                 \ textwidth=80
 augroup END
-"}}}
-
-" Special functions {{{
-function! ToggleSyntax()
-    if exists("g:syntax_on")
-        syntax off
-    else
-        syntax enable
-    endif
-endfunction
-
 "}}}
 
 " Abreviations {{{
@@ -210,7 +267,7 @@ inoremap <C-@> <C-Space>
 nnoremap <leader>" viw<esc>a"<esc>hbi"<esc>lel
 " map esc in insert mode to jk
 inoremap jk <esc>
-vnoremap jk <esc>
+vnoremap jk <nop>
 "inoremap <esc> <nop>
 "vnoremap <esc> <nop>
 " surround current word in quotes
@@ -236,10 +293,10 @@ nnoremap <leader>,c <c-w>c
 nnoremap <leader>da :call ale#debugging#Info()<CR>
 if s:os =~#'win'
     nnoremap <leader>ea :e 
-    \   ~\vimfiles\plugged\ale\ale_linters\powershell\psscriptanalyzer.vim<CR>
+    \   ~\vimfiles\plugged\ale\ale_linters\powershell\powershell.vim<CR>
 else
     nnoremap <leader>ea :e 
-    \   ~/.vim/plugged/ale/ale_linters/powershell/psscriptanalyzer.vim<CR>
+    \   ~/.vim/plugged/ale/ale_linters/powershell/powershell.vim<CR>
 endif
 nnoremap <leader>sll :call ShowLongLines()<Cr>
 "}}}
@@ -254,6 +311,15 @@ endfunction
 function! SetFileCount(files) abort
     let l:cols = a:files * 85
     let &columns = l:cols
+    execute "normal! \<C-w>="
+endfunction
+
+function! ToggleSyntax()
+    if exists("g:syntax_on")
+        syntax off
+    else
+        syntax enable
+    endif
 endfunction
 
 " }}}
