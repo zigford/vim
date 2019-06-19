@@ -65,6 +65,9 @@ Set-Location (Split-Path -Path $PSScriptRoot -Parent)
 if (-Not (Test-Path "${VIMFILES}")) {
     New-Item -ItemType Directory -Path $VIMFILES
 }
+if (-Not (Test-Path "${VIMFILES}/autoload/plug.vim")) {
+    Install-VPlug
+}
 if (Test-Path vimfiles) {
     Copy-Item -Recurse vimfiles/* "$VIMFILES" -Force
 }
