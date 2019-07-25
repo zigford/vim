@@ -55,10 +55,9 @@ function Install-FiraCode {
     Invoke-WebRequest @WebRequest
 	Expand-Archive $WebRequest.OutFile -Destination $TempDir
 	$Fonts = Get-ChildItem $TempDir -Recurse -Filter *.ttf
-	$InstalledFonts = Get-RegisteredFonts
 	ForEach ($Font in $Fonts) {
 		# Install each font
-		If ($Font.Name -notin $InstalledFonts.File) {
+		If ($Font.Name -notin (Get-RegisteredFonts).File) {
 			InvokeVerb -FilePath $Font.FullName -verb "Install"
 		} else {
 			Write-Verbose "$($Font.Name) already installed"
