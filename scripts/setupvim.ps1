@@ -71,9 +71,9 @@ if ($IsWindows) {
     $ErrorActionPreference="SilentlyContinue"
     # On Windows, we need to be elevated to create links
     if (-Not((New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator))) { 
-        #Start-Process -FilePath "$((get-process -Id $PID).ProcessName).exe" -Verb runAs -ArgumentList "-NoExit -File $PSCommandPath"
+        Start-Process -FilePath "$((get-process -Id $PID).ProcessName).exe" -Verb runAs -ArgumentList "-NoExit -File $PSCommandPath"
         Write-Warning "We weren't elevated, which we need on Windows"
-        #return
+        exit 0
     }
     $VIMFILES = "$HOME\vimfiles"
     $VIMRC = "$HOME\_vimrc"
