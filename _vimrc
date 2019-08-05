@@ -40,14 +40,13 @@ let s:plug = s:vo . 'plug'
 noremap ga <Plug>(EasyAlign)
 " Setup ga shortcut for easyaline in normal mode
 xnoremap ga <Plug>(EasyAlign)
-" xml folding
 nmap gd <Plug>(ale_detail)
 let g:table_mode_corner='|'
 let g:ale_completion_enabled = 1
 let g:ale_set_quickfix = 1
 let g:ale_linter_aliases = {'ps1': 'powershell'}
 "let g:ale_linters = {'powershell': ['psscriptanalyzer']}
-let g:ale_linters = {'powershell': ['powershell']}
+"let g:ale_linters = {'powershell': ['powershell']}
 if s:os=~#'win'
     let g:ale_powershell_psscriptanalyzer_executable = 'powershell.exe'
     let g:ale_powershell_powershell_executable = 'powershell.exe'
@@ -158,9 +157,21 @@ augroup ALE
     autocmd!
     autocmd FileType ale-preview setlocal wrap
 augroup END
+augroup SetupLOG
+    autocmd!
+    autocmd BufRead setupact.log set filetype=winlog
+    autocmd BufRead dism*.log set filetype=winlog
+    autocmd FileType winlog call SetFileCount(3)
+    autocmd FileType winlog highlight WinError ctermbg=red ctermfg=white guibg=#292929 guifg=red
+    autocmd FileType winlog highlight WinWarning ctermbg=blue ctermfg=white guibg=#292929 guifg=white
+    autocmd FileType winlog syntax match WinError /\v.*Error.*/
+    autocmd FileType winlog syntax match WinWarning /\v.*Warning.*/
+augroup END
 augroup XML
     autocmd!
-    autocmd FileType xml setlocal foldmethod=indent foldlevelstart=999 foldminlines=0
+    autocmd FileType xml setlocal foldmethod=indent foldlevelstart=99 foldminlines=0
+    autocmd FileType xml nnoremap <leader>fm :%s/></>\r</g<CR>G=gg
+    autocmd BufRead CompatData*.xml silent! exec "%s/></>\r</g|norm!G=ggzR"
 augroup END
 augroup HTML
     autocmd!
@@ -253,12 +264,12 @@ nnoremap <silent> <leader>s :call ToggleSyntax()<CR>|   " M
 nnoremap <silent> <leader>w :set wrap!<CR>
 nnoremap <silent> <leader>n :set number!<CR>
 nnoremap <leader>, ,|                         " remap leader+, to ,
-nnoremap <Space> <PageDown>|
+nnoremap <Space> <Nop>|
 inoremap <c-u> <esc>viwUwa|                   " Map Ctrl+u to uppercase current word in insertmode
 nnoremap <c-u> viwU|                          " Map Ctrl+u to uppercase current word in normalmode
 nnoremap <leader>ev :vsplit $MYVIMRC<CR>|     " Edit VimRC in a v split
 nnoremap <leader>eV :e $MYVIMRC<CR>|          " Edit VimRC in fullscreen
-nnoremap <leader>cc :close<CR>|               " Edit VimRC in a v split
+nnoremap <leader>cc :close<CR>:call SetFileCount(1)<CR>|               " Edit VimRC in a v split
 nnoremap <leader>vs :execute "rightbelow vsplit " . bufname("#")<CR>
 nnoremap <leader>sp :execute "rightbelow split " . bufname("#")<CR>
 " Remap tab to auto complete 
@@ -299,6 +310,10 @@ else
     \   ~/.vim/plugged/ale/ale_linters/powershell/powershell.vim<CR>
 endif
 nnoremap <leader>sll :call ShowLongLines()<Cr>
+nnoremap <leader>p :call TogglePatchLine()<Cr>
+nnoremap <leader>> :cn<CR>
+nnoremap <leader>< :cp<CR>
+nnoremap <leader>vs :vs<CR>:call SetFileCount(2)<CR>
 "}}}
 
 " Custom functions {{{
@@ -319,6 +334,22 @@ function! ToggleSyntax()
         syntax off
     else
         syntax enable
+    endif
+endfunction
+
+function! TogglePatchLine() abort
+    let a:curline = getline(line('.'))
+    let a:char = " "
+    if len(a:curline)
+        let a:char = a:curline[0]
+    endif
+    let a:cur_pos = getpos('.')
+    if a:char == "-"
+        normal 0r 
+        call setpos('.', a:cur_pos)
+        normal j
+    elseif a:char == "+"
+        normal dd
     endif
 endfunction
 
