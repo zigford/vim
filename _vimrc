@@ -143,6 +143,10 @@ let mapleader=","
 set statusline=buf:%n\ %m%.25f\ %y\ lin:%l/%L\ col:%c%=%m
 set laststatus=2
 let maplocalleader=","
+set path+=**                                  " 
+set wildmenu
+set wildignore+=**/node_modules/**
+
 " }}}
 
 " Auto Cmds {{{
@@ -352,5 +356,33 @@ function! TogglePatchLine() abort
         normal dd
     endif
 endfunction
+
+function! YesNo() abort
+    let l:curline = getline(line('.'))
+    let l:cur_pos = getpos('.')
+    if len(l:curline)
+        normal! $b
+        let l:char = strcharpart(getline('.')[col('.') - 1:], 0, 1)
+        if l:char == ","
+            normal! ehhh
+            execute "normal! cwyes\<esc>"
+        elseif l:char == "y"
+            execute "normal! xxxi no\<esc>"
+        elseif l:char == "n"
+            execute "normal! dwi  \<esc>"
+        endif
+    endif
+    call setpos('.', l:cur_pos)
+endfunction
+nnoremap <leader>. :call YesNo()<CR>
+
+function! s:DiffWithSaved()
+  let filetype=&ft
+  diffthis
+  vnew | r # | normal! 1Gdd
+  diffthis
+  exe "setlocal bt=nofile bh=wipe nobl noswf ro ft=" . filetype
+endfunction
+com! DiffSaved call s:DiffWithSaved()
 
 " }}}
