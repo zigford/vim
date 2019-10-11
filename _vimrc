@@ -219,12 +219,7 @@ augroup markdown
     autocmd FileType markdown setlocal textwidth=80 spell spelllang=en_au
     autocmd FileType markdown onoremap ih :<c-u>execute "normal! ?^[=-][=-]\\+$\r:nohlsearch\rkvg_"<cr>
     autocmd FileType markdown onoremap ah :<c-u>execute "normal! ?^[=-][=-]\\+$\r:nohlsearch\rg_vk0"<cr>
-    autocmd FileType markdown iabbrev vi <div id="video"><cr><tab><video width="100%" controls>
-            \<cr><tab><source src="https://f002.backblazeb2.com/file/BlogVideos/.mp4"
-            \type="video/mp4">
-            \<cr><tab><tab>Your browser does not support the video tag.
-            \<cr><tab></video><cr></div><cr><cr>
-            \You can download the file by right clicking [here][1] and click 'save-as'
+    autocmd FileType markdown nnoremap <leader>iv :call InsertVideoTag()<cr>
     autocmd FileType markdown iabbrev sig If you have and corrections or memories I can add to this post
             \, please email<cr>me at jesse@zigford.org
 augroup END
@@ -261,6 +256,9 @@ augroup END
 
 " Abreviations {{{
 iabbrev ssig -- <cr>Jesse Harris<cr>jesse@zigford.org
+iabbrev powerShell  PowerShell
+iabbrev Powershell  PowerShell
+iabbrev powershell  PowerShell
 "}}}
 
 " Mappings {{{
@@ -384,5 +382,24 @@ function! s:DiffWithSaved()
   exe "setlocal bt=nofile bh=wipe nobl noswf ro ft=" . filetype
 endfunction
 com! DiffSaved call s:DiffWithSaved()
+
+function! InsertVideoTag() abort
+    let l:cl=line('.')
+    let l:pastesetting = &paste
+    call append(l:cl,'<div id="video">')
+    call append(l:cl+1,'    <video width="100%" controls>')
+    call append(l:cl+2,'        <source ')
+    call append(l:cl+3,'          src=""')
+    call append(l:cl+4,'          type="video/mp4">')
+    call append(l:cl+5,'          Your browser does not support the video tag.')
+    call append(l:cl+6,'    </video>')
+    call append(l:cl+7,'</div>')
+    call append(l:cl+8,'')
+    call append(l:cl+9,'You can download the file by right clicking [here][1] a
+                \nd click "save-as"')
+    call append(l:cl+10,'')
+    call setpos('.',[0,l:cl+4,40,0])
+    startinsert
+endfunction
 
 " }}}
