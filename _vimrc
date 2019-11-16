@@ -10,6 +10,9 @@ if has('win32')                      " Check if we are on windows.
     set nofixeol                     " Disable the fixeol : Not really sure
                                      " why this is needed
 else
+    if &term == 'xterm-kitty'
+        set t_ut=
+    endif
     let s:uname = system('uname')    " Check which variant of Unix we are running Linux|Macos
     let s:os=(s:uname=~#'Darwin') ? 'macos' : 'lin'
     let s:WU ='jpharris'
@@ -46,10 +49,16 @@ let g:ale_completion_enabled = 1
 let g:ale_set_quickfix = 1
 let g:ale_linter_aliases = {'ps1': 'powershell'}
 "let g:ale_linters = {'powershell': ['psscriptanalyzer']}
-"let g:ale_linters = {'powershell': ['powershell']}
+let g:ale_linters = {'powershell': ['powershell']}
 if s:os=~#'win'
     let g:ale_powershell_psscriptanalyzer_executable = 'powershell.exe'
     let g:ale_powershell_powershell_executable = 'powershell.exe'
+else
+    let g:ale_powershell_powershell_executable = 'pwsh-preview'
+    let g:vimwiki_list = [{'path': '~/Documents/vimwiki'},
+                \{'path': '~/Documents/personal_vimwiki'}]
+    let g:vimwiki_text_ignore_newline = 0
+    "\ 'syntax': 'markdown', 'ext': '.md'}]
 endif
 execute 'source ' . split(&rtp, ',')[0] . '/autoload/plug.vim'
 if exists('*plug#begin')
@@ -58,7 +67,7 @@ if exists('*plug#begin')
     Plug 'junegunn/gv.vim'
     Plug 'junegunn/vim-easy-align'
     Plug 'dhruvasagar/vim-table-mode'
-    Plug 'zigford/ale'
+    Plug 'dense-analysis/ale'
     Plug 'tomtom/tlib_vim'
     Plug 'gruvbox-community/gruvbox'
 "    Plug 'neoclide/coc.nvim', {'tag': '*', 'do': './install.sh'}
@@ -67,6 +76,8 @@ if exists('*plug#begin')
     Plug 'zigford/vim-powershell'
     Plug 'garbas/vim-snipmate'
     Plug 'honza/vim-snippets'
+    Plug 'vimwiki/vimwiki'
+    Plug 'rodjek/vim-puppet'
     call plug#end()
 endif
 "set rtp+=/usr/local/opt/fzf
@@ -83,7 +94,7 @@ if has('gui_running')                         " Options for gvim only
         set columns=90                            " Set default amount of columns
     endif
     if s:os =~# 'lin'
-        set guifont=Fira\ Code\ 12
+        set guifont=Cascadia\ Code\ 13
     elseif s:os =~# 'mac'
         set guifont=FiraCode-Regular:h14
     else
@@ -103,24 +114,36 @@ else
     endif
     if s:os =~# 'lin'
         "set t_te=[H[2J
+        if exists ("$TMUX_PANE")
+            set notgc
+        endif
     endif
 endif
 
 " The following is a bit of vimscript to set the colorscheme based on
 " time of day
 
-let s:time = has('win32') ? system('time /t') : system('date "+%I:%M %p"')
-" logic to handle day/night
-let s:hour = split(s:time, ':')[0]
-let s:PM   = split(s:time)[1]
-
-if (s:PM ==? 'PM' && 
- \ (s:hour > 7 && s:hour != 12)) ||
- \ (s:PM ==? 'AM' &&
- \ (s:hour < 8 || s:hour == 12))              " Between 8pm and 8am is night
-    set background=dark
+if filereadable("/home/harrisj/.config/vim/mode")
+    let s:mode=system('cat /home/harrisj/.config/vim/mode')
+    if s:mode =~ 'light' 
+        set background=light
+    else
+        set background=dark
+    endif
 else
-    set background=light
+    let s:time = has('win32') ? system('time /t') : system('date "+%I:%M %p"')
+    " logic to handle day/night
+    let s:hour = split(s:time, ':')[0]
+    let s:PM   = split(s:time)[1]
+
+    if (s:PM ==? 'PM' && 
+    \ (s:hour > 7 && s:hour != 12)) ||
+    \ (s:PM ==? 'AM' &&
+    \ (s:hour < 8 || s:hour == 12))              " Between 8pm and 8am is night
+        set background=dark
+    else
+        set background=light
+    endif
 endif
 colorscheme gruvbox
 "colorscheme dark_mode
@@ -183,32 +206,33 @@ augroup HTML
 augroup END
 augroup PS1
     autocmd!
-    autocmd FileType ps1 xnoremap <leader>( <ESC>`>a)<ESC>`<i(<ESC>
-    autocmd FileType ps1 nnoremap <leader>a(() vF(<ESC>`>a)<ESC>`<i(<ESC>f)
-    autocmd FileType ps1 nnoremap co I#<esc>j
-    autocmd FileType ps1 vnoremap co :norm i#<CR>
-    autocmd FileType ps1 vnoremap cx :norm x<CR>
-    autocmd FileType ps1 onoremap fn :<c-u>execute "normal! /[Ff]unction\r:nohlsearch\rV%"<cr>
-    autocmd FileType ps1 onoremap FN :<c-u>execute "normal! ?[Ff]unction\r:nohlsearch\rV%"<cr>
-    autocmd FileType ps1 xnoremap <F8> y<C-W>w<C-W>"0<C-W>w
-    autocmd FileType ps1 nnoremap <leader>fn y<C-W>w<C-W>"0<C-W>w
-    "autocmd FileType ps1 nnoremap <F5> call term_sendkeys(9, '& "%"<CR>')
-    autocmd FileType ps1 iabbrev <buffer> gci Get-ChildItem
-    autocmd FileType ps1 iabbrev <buffer> % ForEach-Object
-    autocmd FileType ps1 iabbrev <buffer> ? Where-Object
-    autocmd FileType ps1 iabbrev <buffer> gc Get-Content
-    "autocmd FileType ps1 iabbrev for for ($i=0; $i -lt 10; $i++) {<cr>
+    autocmd FileType powershell xnoremap <leader>( <ESC>`>a)<ESC>`<i(<ESC>
+    autocmd FileType powershell nnoremap <leader>a(() vF(<ESC>`>a)<ESC>`<i(<ESC>f)
+    autocmd FileType powershell nnoremap co I#<esc>j
+    autocmd FileType powershell vnoremap co :norm i#<CR>
+    autocmd FileType powershell vnoremap cx :norm x<CR>
+    autocmd FileType powershell onoremap fn :<c-u>execute "normal! /[Ff]unction\r:nohlsearch\rV%"<cr>
+    autocmd FileType powershell onoremap FN :<c-u>execute "normal! ?[Ff]unction\r:nohlsearch\rV%"<cr>
+    autocmd FileType powershell nmap <leader>cf :norm "+yFN<CR>
+    autocmd FileType powershell xnoremap <F8> y<C-W>w<C-W>"0<C-W>w
+    autocmd FileType powershell nnoremap <leader>fn y<C-W>w<C-W>"0<C-W>w
+    "autocmd FileType powershell nnoremap <F5> call term_sendkeys(9, '& "%"<CR>')
+    autocmd FileType powershell iabbrev <buffer> gci Get-ChildItem
+    autocmd FileType powershell iabbrev <buffer> % ForEach-Object
+    autocmd FileType powershell iabbrev <buffer> ? Where-Object
+    autocmd FileType powershell iabbrev <buffer> gc Get-Content
+    "autocmd FileType powershell iabbrev for for ($i=0; $i -lt 10; $i++) {<cr>
 "    if has('win32')
-"        autocmd FileType ps1 set makeprg=pwsh\ -command\ \"&{trap{$_.tostring();continue}&{$c=gc\ '%';$c=[string]::join([environment]::newline,$c);[void]$executioncontext.invokecommand.newscriptblock($c)}}\"
+"        autocmd FileType powershell set makeprg=pwsh\ -command\ \"&{trap{$_.tostring();continue}&{$c=gc\ '%';$c=[string]::join([environment]::newline,$c);[void]$executioncontext.invokecommand.newscriptblock($c)}}\"
 "    else
-"        autocmd FileType ps1 set makeprg=pwsh\ -command\ \"&{
+"        autocmd FileType powershell set makeprg=pwsh\ -command\ \"&{
 "            \trap{\\$_.tostring\();continue}&{
 "            \\\$c=gc\ '%';
 "            \\\$c=[string]::join([environment]::newline,\\$c);
 "            \[void]\\$executioncontext.invokecommand.newscriptblock(\\$c)}
 "        \}\"
 "    endif
-"    autocmd FileType ps1 set errorformat=%EAt\ line:%l\ char:%c,%-C+%.%#,%Z%m,%-G\\s%#
+"    autocmd FileType powershell set errorformat=%EAt\ line:%l\ char:%c,%-C+%.%#,%Z%m,%-G\\s%#
 augroup END
 augroup ps1test
     autocmd!
