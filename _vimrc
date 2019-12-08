@@ -78,6 +78,7 @@ if exists('*plug#begin')
     Plug 'honza/vim-snippets'
     Plug 'vimwiki/vimwiki'
     Plug 'rodjek/vim-puppet'
+    Plug '/usr/share/vim'
     call plug#end()
 endif
 "set rtp+=/usr/local/opt/fzf
@@ -326,6 +327,7 @@ nnoremap <c-j> <c-w>j
 nnoremap <c-l> <c-w>l
 nnoremap <c-h> <c-w>h
 nnoremap <leader>,c <c-w>c
+nnoremap <leader>f :FZF<CR>
 " Usefull ale mappings
 nnoremap <leader>da :call ale#debugging#Info()<CR>
 if s:os =~#'win'
