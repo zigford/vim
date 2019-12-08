@@ -160,6 +160,7 @@ set tabstop=4                                 " show existing tab with 4 spaces 
 set shiftwidth=4                              " when indenting with '>', use 4 spaces width
 set expandtab                                 " On pressing tab, insert 4 spaces
 set number                                    " Show line numbers
+set rnu
 set nowrap                                    " don't wrap text
 set showmatch                                 " make code matches easier to see
 set shiftround                                " indents are always right
