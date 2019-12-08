@@ -319,6 +319,8 @@ nnoremap <leader>' viW<esc>a'<esc>hBi'<esc>lel
 " surround current visual in single quotes
 xnoremap <leader>' <esc>`<i'<esc>`>la'<esc>
 inoremap <leader>~~ <esc>`<i~~<esc>`>la~~<esc>
+" enter mapped to nohlsearch
+nnoremap <silent> <cr> :nohlsearch<cr>
 " disable arrows in normal mode
 "noremap <Left> <nop>
 "noremap <Right> <nop>
