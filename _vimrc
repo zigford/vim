@@ -302,7 +302,7 @@ inoremap <c-u> <esc>viwUwa|                   " Map Ctrl+u to uppercase current 
 nnoremap <c-u> viwU|                          " Map Ctrl+u to uppercase current word in normalmode
 nnoremap <leader>ev :vsplit $MYVIMRC<CR>|     " Edit VimRC in a v split
 nnoremap <leader>eV :e $MYVIMRC<CR>|          " Edit VimRC in fullscreen
-nnoremap <leader>cc :close<CR>:call SetFileCount(1)<CR>|               " Edit VimRC in a v split
+nnoremap <leader>c :close<CR>                " Edit VimRC in a v split
 nnoremap <leader>vs :execute "rightbelow vsplit " . bufname("#")<CR>
 nnoremap <leader>sp :execute "rightbelow split " . bufname("#")<CR>
 " Remap tab to auto complete 
