@@ -223,6 +223,7 @@ augroup PS1
     autocmd FileType powershell iabbrev <buffer> % ForEach-Object
     autocmd FileType powershell iabbrev <buffer> ? Where-Object
     autocmd FileType powershell iabbrev <buffer> gc Get-Content
+    autocmd FileType powershell set foldmethod=syntax
     "autocmd FileType powershell iabbrev for for ($i=0; $i -lt 10; $i++) {<cr>
 "    if has('win32')
 "        autocmd FileType powershell set makeprg=pwsh\ -command\ \"&{trap{$_.tostring();continue}&{$c=gc\ '%';$c=[string]::join([environment]::newline,$c);[void]$executioncontext.invokecommand.newscriptblock($c)}}\"
