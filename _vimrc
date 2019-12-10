@@ -171,6 +171,7 @@ let maplocalleader=","
 set path+=**                                  " 
 set wildmenu
 set wildignore+=**/node_modules/**
+set clipboard=unnamedplus                     " interface with sys clipboard
 
 " }}}
 
