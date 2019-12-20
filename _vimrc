@@ -77,6 +77,7 @@ if exists('*plug#begin')
     Plug 'garbas/vim-snipmate'
     Plug 'honza/vim-snippets'
     Plug 'vimwiki/vimwiki'
+    Plug 'thinca/vim-fontzoom'
     Plug 'rodjek/vim-puppet'
     Plug '/usr/share/vim'
     call plug#end()
