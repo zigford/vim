@@ -70,7 +70,7 @@ if exists('*plug#begin')
     Plug 'dense-analysis/ale'
     Plug 'tomtom/tlib_vim'
     Plug 'gruvbox-community/gruvbox'
-"    Plug 'neoclide/coc.nvim', {'tag': '*', 'do': './install.sh'}
+    Plug 'machakann/vim-highlightedyank'
     Plug 'MarcWeber/vim-addon-mw-utils'
     Plug 'chrisbra/csv.vim'
     Plug 'zigford/vim-powershell'
@@ -157,6 +157,7 @@ if has("persistent_undo")
     set undofile                              " Enable persistent undo
 endif
 
+set clipboard=unnamedplus                     " default register in sync with clipboard
 set tabstop=4                                 " show existing tab with 4 spaces width
 set shiftwidth=4                              " when indenting with '>', use 4 spaces width
 set expandtab                                 " On pressing tab, insert 4 spaces
