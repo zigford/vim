@@ -70,13 +70,14 @@ if exists('*plug#begin')
     Plug 'dense-analysis/ale'
     Plug 'tomtom/tlib_vim'
     Plug 'gruvbox-community/gruvbox'
-"    Plug 'neoclide/coc.nvim', {'tag': '*', 'do': './install.sh'}
+    Plug 'machakann/vim-highlightedyank'
     Plug 'MarcWeber/vim-addon-mw-utils'
     Plug 'chrisbra/csv.vim'
     Plug 'zigford/vim-powershell'
     Plug 'garbas/vim-snipmate'
     Plug 'honza/vim-snippets'
     Plug 'vimwiki/vimwiki'
+    Plug 'thinca/vim-fontzoom'
     Plug 'rodjek/vim-puppet'
     Plug '/usr/share/vim'
     call plug#end()
@@ -95,7 +96,7 @@ if has('gui_running')                         " Options for gvim only
         set columns=90                            " Set default amount of columns
     endif
     if s:os =~# 'lin'
-        set guifont=Cascadia\ Code\ 13
+        set guifont=xos4\ Terminus\ Bold\ 11
     elseif s:os =~# 'mac'
         set guifont=FiraCode-Regular:h14
     else
@@ -156,6 +157,7 @@ if has("persistent_undo")
     set undofile                              " Enable persistent undo
 endif
 
+set clipboard=unnamedplus                     " default register in sync with clipboard
 set tabstop=4                                 " show existing tab with 4 spaces width
 set shiftwidth=4                              " when indenting with '>', use 4 spaces width
 set expandtab                                 " On pressing tab, insert 4 spaces
