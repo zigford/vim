@@ -176,6 +176,7 @@ set path+=**                                  "
 set wildmenu
 set wildignore+=**/node_modules/**
 set clipboard=unnamedplus                     " interface with sys clipboard
+set backspace=start                           " allow backspace before insert
 
 " }}}
 
@@ -389,7 +390,7 @@ function! MyDeleteView()
 endfunction
 
 " # Command Delview (and it's abbreviation 'delview')
-command Delview call MyDeleteView()
+" command Delview call MyDeleteView()
 " Lower-case user commands: http://vim.wikia.com/wiki/Replace_a_builtin_command_using_cabbrev
 cabbrev delview <c-r>=(getcmdtype()==':' && getcmdpos()==1 ? 'Delview' : 'delview')<CR>
 
