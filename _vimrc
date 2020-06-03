@@ -70,7 +70,6 @@ if exists('*plug#begin')
     Plug 'dense-analysis/ale'
     Plug 'tomtom/tlib_vim'
     Plug 'gruvbox-community/gruvbox'
-    Plug 'machakann/vim-highlightedyank'
     Plug 'MarcWeber/vim-addon-mw-utils'
     Plug 'chrisbra/csv.vim'
     Plug 'zigford/vim-powershell'
