@@ -285,10 +285,6 @@ augroup email
                 \ formatoptions+=w
                 \ textwidth=80
 augroup END
-augroup menu
-    autocmd!
-    autocmd BufRead /home/harrisj/src/usceduau/SaSTeam-General/Menu/* set columns=200
-augroup END
 "}}}
 
 " Abreviations {{{
