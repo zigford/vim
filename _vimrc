@@ -172,6 +172,8 @@ let maplocalleader=","
 set path+=**                                  " 
 set wildmenu
 set wildignore+=**/node_modules/**
+set incsearch
+set viewoptions-=curdir
 
 " }}}
 
