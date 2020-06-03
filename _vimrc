@@ -313,9 +313,9 @@ inoremap <C-@> <C-Space>
 nnoremap <leader>" viw<esc>a"<esc>hbi"<esc>lel
 " map esc in insert mode to jk
 inoremap jk <esc>
-vnoremap jk <nop>
-"inoremap <esc> <nop>
-"vnoremap <esc> <nop>
+vnoremap jk <esc>
+inoremap <esc> <nop>
+vnoremap <esc> <nop>
 " surround current word in quotes
 nnoremap <leader>" viW<esc>a"<esc>hBi"<esc>lel
 nnoremap <leader>' viW<esc>a'<esc>hBi'<esc>lel
@@ -325,10 +325,10 @@ inoremap <leader>~~ <esc>`<i~~<esc>`>la~~<esc>
 " enter mapped to nohlsearch
 nnoremap <silent> <cr> :nohlsearch<cr>
 " disable arrows in normal mode
-"noremap <Left> <nop>
-"noremap <Right> <nop>
-"noremap <Up> <nop>
-"noremap <Down> <nop>
+noremap <Left> <nop>
+noremap <Right> <nop>
+noremap <Up> <nop>
+noremap <Down> <nop>
 " replace above email
 onoremap in@ :<c-u>execute "normal! :set iskeyword+=.\r?[a-zA-Z.]\\+@[a-zA-Z.]\\+\rvwe"<cr>
 " moving around in windows:
