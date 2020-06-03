@@ -49,7 +49,7 @@ let g:ale_completion_enabled = 1
 let g:ale_set_quickfix = 1
 let g:ale_linter_aliases = {'ps1': 'powershell'}
 "let g:ale_linters = {'powershell': ['psscriptanalyzer']}
-let g:ale_linters = {'powershell': ['powershell']}
+let g:ale_linters = {'powershell': ['powershell','psscriptanalyzer']}
 if s:os=~#'win'
     let g:ale_powershell_psscriptanalyzer_executable = 'powershell.exe'
     let g:ale_powershell_powershell_executable = 'powershell.exe'
@@ -157,6 +157,8 @@ if has("persistent_undo")
 endif
 
 set clipboard=unnamedplus                     " default register in sync with clipboard
+set modeline
+set hidden
 set tabstop=4                                 " show existing tab with 4 spaces width
 set shiftwidth=4                              " when indenting with '>', use 4 spaces width
 set expandtab                                 " On pressing tab, insert 4 spaces
@@ -174,6 +176,7 @@ set wildmenu
 set wildignore+=**/node_modules/**
 set incsearch
 set viewoptions-=curdir
+set backspace=start                           " allow backspace before insert
 
 " }}}
 
@@ -222,7 +225,7 @@ augroup PS1
     autocmd FileType powershell vnoremap cx :norm x<CR>
     autocmd FileType powershell onoremap fn :<c-u>execute "normal! /[Ff]unction\r:nohlsearch\rV%"<cr>
     autocmd FileType powershell onoremap FN :<c-u>execute "normal! ?[Ff]unction\r:nohlsearch\rV%"<cr>
-    autocmd FileType powershell nmap <leader>cf :norm "+yFN<CR>
+    autocmd FileType powershell nmap <leader>yf :norm "+yFN<CR>
     autocmd FileType powershell xnoremap <F8> y<C-W>w<C-W>"0<C-W>w
     autocmd FileType powershell nnoremap <leader>fn y<C-W>w<C-W>"0<C-W>w
     "autocmd FileType powershell nnoremap <F5> call term_sendkeys(9, '& "%"<CR>')
@@ -230,6 +233,7 @@ augroup PS1
     autocmd FileType powershell iabbrev <buffer> % ForEach-Object
     autocmd FileType powershell iabbrev <buffer> ? Where-Object
     autocmd FileType powershell iabbrev <buffer> gc Get-Content
+    autocmd FileType powershell set foldmethod=syntax
     "autocmd FileType powershell iabbrev for for ($i=0; $i -lt 10; $i++) {<cr>
 "    if has('win32')
 "        autocmd FileType powershell set makeprg=pwsh\ -command\ \"&{trap{$_.tostring();continue}&{$c=gc\ '%';$c=[string]::join([environment]::newline,$c);[void]$executioncontext.invokecommand.newscriptblock($c)}}\"
@@ -285,6 +289,19 @@ augroup email
                 \ formatoptions+=w
                 \ textwidth=80
 augroup END
+augroup php
+    autocmd!
+    autocmd FileType php let @d='/mysql_fetch_arraydf(ea->fetch_assoc(@d'
+    autocmd FileType php let @f='/mysql_list_fieldscf"$db->query("SHOW COLUMNS FROM /mysql_num_fieldsdd/for (Cwhile ($myfield=$fields->fetch_assoc()) {j0f=lldf(amyeldt;i[''Field'']@f'
+    autocmd FileType php let @n='/mysql_num_rowscdt(xf)xi->num_rows@n'
+    autocmd FileType php let @p='/\v\<\?(php)@!laphp@p'
+    autocmd FileType php let @g='/mysql_num_fieldsdt(xf)xi->field_count/mysql_field_namedt(f,ct;->fetch_field_direct($i))->name@g'
+    autocmd FileType php let @r='/mysql_resultdf(Ecw->fetch_row(lxxa[pa]@r'
+    autocmd FileType php let @c='/\vcase [^''"]wi''ea''@c'
+    autocmd FileType php let @i='/INSERT INTO0wye/mysql_insert_idct;$db->insert_id@i'
+    autocmd FileType php nnoremap <leader>d yiwgg}o$<c-r>" = isset($_REQUEST['<c-r>"']) ? $_REQUEST['<c-r>"'] : NULL;<esc><c-o><c-o>
+    autocmd FileType php nnoremap <leader>' EBi'<esc>lea'<esc>
+augroup END
 "}}}
 
 " Abreviations {{{
@@ -304,7 +321,7 @@ inoremap <c-u> <esc>viwUwa|                   " Map Ctrl+u to uppercase current 
 nnoremap <c-u> viwU|                          " Map Ctrl+u to uppercase current word in normalmode
 nnoremap <leader>ev :vsplit $MYVIMRC<CR>|     " Edit VimRC in a v split
 nnoremap <leader>eV :e $MYVIMRC<CR>|          " Edit VimRC in fullscreen
-nnoremap <leader>cc :close<CR>:call SetFileCount(1)<CR>|               " Edit VimRC in a v split
+nnoremap <leader>cc :close<CR>                " Edit VimRC in a v split
 nnoremap <leader>vs :execute "rightbelow vsplit " . bufname("#")<CR>
 nnoremap <leader>sp :execute "rightbelow split " . bufname("#")<CR>
 " Remap tab to auto complete 
@@ -342,10 +359,10 @@ nnoremap <leader>f :FZF<CR>
 nnoremap <leader>da :call ale#debugging#Info()<CR>
 if s:os =~#'win'
     nnoremap <leader>ea :e 
-    \   ~\vimfiles\plugged\ale\ale_linters\powershell\powershell.vim<CR>
+    \   ~\.vimother\plug\ale\ale_linters\powershell\powershell.vim<CR>
 else
     nnoremap <leader>ea :e 
-    \   ~/.vim/plugged/ale/ale_linters/powershell/powershell.vim<CR>
+    \   ~/.vimother/plug/ale/ale_linters/powershell/powershell.vim<CR>
 endif
 nnoremap <leader>sll :call ShowLongLines()<Cr>
 nnoremap <leader>p :call TogglePatchLine()<Cr>
@@ -407,6 +424,27 @@ endfunction
 
 nnoremap <leader><Space> :call ToggleComment()<cr>
 vnoremap <leader><Space> :call ToggleComment()<cr>
+" # Function to permanently delete views created by 'mkview'
+function! MyDeleteView()
+    let path = fnamemodify(bufname('%'),':p')
+    " vim's odd =~ escaping for /
+    let path = substitute(path, '=', '==', 'g')
+    if empty($HOME)
+    else
+        let path = substitute(path, '^'.$HOME, '\~', '')
+    endif
+    let path = substitute(path, '/', '=+', 'g') . '='
+    " view directory
+    let path = &viewdir.'/'.path
+    call delete(path)
+    echo "Deleted: ".path
+endfunction
+
+" # Command Delview (and it's abbreviation 'delview')
+" command Delview call MyDeleteView()
+" Lower-case user commands: http://vim.wikia.com/wiki/Replace_a_builtin_command_using_cabbrev
+cabbrev delview <c-r>=(getcmdtype()==':' && getcmdpos()==1 ? 'Delview' : 'delview')<CR>
+
 function! ShowLongLines() abort
     highlight OverLength ctermbg=red ctermfg=white guibg=#592929
     match OverLength /\%80v.\+/
