@@ -1,9 +1,9 @@
-#!/bin/bash
+#!/bin/sh
 
 # Function to get full path to a relative file. POSIX compliant. Ripped from:
 # https://stackoverflow.com/a/3915420
 
-function gfilepath(){
+gfilepath() {
 	echo "$(cd "$(dirname "$1")"; pwd -P)/$(basename "$1")"
 }
 
