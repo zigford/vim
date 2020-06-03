@@ -185,6 +185,10 @@ augroup All
     autocmd BufWinLeave * silent! mkview
     autocmd BufWinEnter * silent! loadview
 augroup END
+augroup Ansible
+    autocmd!
+    autocmd FileType yaml nnoremap <silent> <leader>a :!ansible-playbook -i hosts %<CR>
+augroup END
 augroup ALE
     autocmd!
     autocmd FileType ale-preview setlocal wrap
