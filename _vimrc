@@ -302,6 +302,10 @@ augroup php
     autocmd FileType php nnoremap <leader>d yiwgg}o$<c-r>" = isset($_REQUEST['<c-r>"']) ? $_REQUEST['<c-r>"'] : NULL;<esc><c-o><c-o>
     autocmd FileType php nnoremap <leader>' EBi'<esc>lea'<esc>
 augroup END
+augroup yml
+    autocmd!
+    autocmd FileType yaml nnoremap <leader>a :!ansible-playbook -i hosts % --vault-password-file ~/.ansible/vault-pass.txt<cr>
+augroup END
 "}}}
 
 " Abreviations {{{
