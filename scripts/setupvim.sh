@@ -4,15 +4,8 @@
 # https://stackoverflow.com/a/3915420
 
 gfilepath() {
-	echo "$(cd "$(dirname "$1")"; pwd -P)/$(basename "$1")"
+	echo "$(cd "$(dirname "$0")"; pwd -P)/$(basename "$1")"
 }
-
-#deps
-which git || sudo apt-get install git -y
-
-which curl || sudo apt-get install curl -y
-
-which vim || sudo apt-get install vim -y
 
 # install vim-plug
 if ! test -f ~/.vim/autoload/plug.vim; then 
