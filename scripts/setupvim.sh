@@ -13,5 +13,4 @@ if ! test -f ~/.vim/autoload/plug.vim; then
         https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 fi
 
-#ln -s "$(gfilepath /_vimrc)" ~/.vimrc
-echo "$(gfilepath)/_vimrc" 
+ln -s "$(gfilepath)/_vimrc" ~/.vimrc
