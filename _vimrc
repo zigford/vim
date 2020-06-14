@@ -334,7 +334,7 @@ nnoremap <leader>" viw<esc>a"<esc>hbi"<esc>lel
 " map esc in insert mode to jk
 inoremap jk <esc>
 vnoremap jk <esc>
-inoremap <esc> <nop>
+" inoremap <esc> <nop>
 vnoremap <esc> <nop>
 " surround current word in quotes
 nnoremap <leader>" viW<esc>a"<esc>hBi"<esc>lel
