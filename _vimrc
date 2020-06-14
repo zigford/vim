@@ -77,7 +77,6 @@ if exists('*plug#begin')
     Plug 'honza/vim-snippets'
     Plug 'vimwiki/vimwiki'
     Plug 'thinca/vim-fontzoom'
-    Plug 'rodjek/vim-puppet'
     Plug '/usr/share/vim'
     call plug#end()
 endif
