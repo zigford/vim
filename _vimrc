@@ -158,7 +158,7 @@ if has("persistent_undo")
     set undofile                              " Enable persistent undo
 endif
 
-set clipboard=unnamedplus                     " default register in sync with clipboard
+set clipboard=unnamed                         " default register in sync with clipboard
 set modeline
 set hidden
 set tabstop=4                                 " show existing tab with 4 spaces width
