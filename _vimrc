@@ -99,8 +99,11 @@ if has('gui_running')                         " Options for gvim only
         set guifont=FiraCode-Regular:h14
     else
         " Prolly windows
-        set guifont=Fira_Code:h11:cANSI:qDRAFT 
-        "set guifont=Lucida_Console:h11:cANSI:qDRAFT 
+        try
+            set guifont=Fira_Code:h11:cANSI:qDRAFT 
+        catch
+            set guifont=Consolas:h10:cANSI:qDRAFT 
+        endtry
         set renderoptions=type:directx
         set encoding=utf-8
     endif
