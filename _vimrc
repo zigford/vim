@@ -78,6 +78,7 @@ if exists('*plug#begin')
     Plug 'vimwiki/vimwiki'
     Plug 'thinca/vim-fontzoom'
     Plug '/usr/share/vim'
+    Plug 'arouene/vim-ansible-vault'
     call plug#end()
 endif
 "set rtp+=/usr/local/opt/fzf
@@ -189,10 +190,6 @@ augroup All
 "    autocmd VimEnter call * libcallnr("gvimborder.dll", "SetBorder", 0x080808)
     autocmd BufWinLeave * silent! mkview
     autocmd BufWinEnter * silent! loadview
-augroup END
-augroup Ansible
-    autocmd!
-    autocmd FileType yaml nnoremap <silent> <leader>a :!ansible-playbook -i hosts %<CR>
 augroup END
 augroup ALE
     autocmd!
@@ -306,7 +303,9 @@ augroup php
 augroup END
 augroup yml
     autocmd!
-    autocmd FileType yaml nnoremap <leader>a :!ansible-playbook -i hosts % --vault-password-file ~/.ansible/vault-pass.txt<cr>
+    autocmd FileType yaml nnoremap <leader><F5> :!ansible-playbook -i hosts %<cr>
+    autocmd FileType yaml nnoremap <leader>ae :AnsibleVault<CR>
+    autocmd FileType yaml nnoremap <leader>ad :AnsibleUnvault<CR>
 augroup END
 "}}}
 
