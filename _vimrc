@@ -303,7 +303,7 @@ augroup php
 augroup END
 augroup yml
     autocmd!
-    autocmd FileType yaml nnoremap <leader><F5> :!ansible-playbook -i hosts %<cr>
+    autocmd FileType yaml nnoremap <leader>aa :!ansible-playbook -i hosts %<cr>
     autocmd FileType yaml nnoremap <leader>ae :AnsibleVault<CR>
     autocmd FileType yaml nnoremap <leader>ad :AnsibleUnvault<CR>
 augroup END
