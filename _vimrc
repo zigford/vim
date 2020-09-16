@@ -180,6 +180,7 @@ set wildignore+=**/node_modules/**
 set incsearch
 set viewoptions-=curdir
 set backspace=start,indent                           " allow backspace before insert
+set scrolloff=6
 
 " }}}
 
