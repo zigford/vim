@@ -77,6 +77,7 @@ if exists('*plug#begin')
     Plug 'honza/vim-snippets'
     Plug 'vimwiki/vimwiki'
     Plug 'thinca/vim-fontzoom'
+    Plug 'osamuaoki/vim-spell-under'
     Plug '/usr/share/vim'
     Plug 'arouene/vim-ansible-vault'
     call plug#end()
@@ -149,7 +150,7 @@ else
         set background=light
     endif
 endif
-colorscheme gruvbox
+let g:spell_under='gruvbox'
 "colorscheme dark_mode
 " }}}
 
