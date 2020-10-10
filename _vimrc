@@ -96,7 +96,7 @@ if has('gui_running')                         " Options for gvim only
         set columns=90                            " Set default amount of columns
     endif
     if s:os =~# 'lin'
-        set guifont=xos4\ Terminus\ Bold\ 11
+        set guifont=Terminus\ Bold\ 11
     elseif s:os =~# 'mac'
         set guifont=FiraCode-Regular:h14
     else
