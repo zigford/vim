@@ -308,6 +308,7 @@ augroup yml
     autocmd FileType yaml nnoremap <leader>aa :!ansible-playbook -i hosts %<cr>
     autocmd FileType yaml nnoremap <leader>ae :AnsibleVault<CR>
     autocmd FileType yaml nnoremap <leader>ad :AnsibleUnvault<CR>
+    autocmd FileType yaml set tabstop=2 shiftwidth=2 expandtab
 augroup END
 "}}}
 
