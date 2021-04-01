@@ -88,7 +88,7 @@ endif
 
 " Look and feel {{{
 if has('gui_running')                         " Options for gvim only
-    set guioptions -=m                        " Disable menubar
+    "set guioptions -=m                        " Disable menubar
     set guioptions -=T                        " Disable Status bar
     if ! exists("g:linesset")
         let g:linesset = "yes"
@@ -96,7 +96,7 @@ if has('gui_running')                         " Options for gvim only
         set columns=90                            " Set default amount of columns
     endif
     if s:os =~# 'lin'
-        set guifont=Terminus\ Bold\ 11
+        set guifont=Droid\ Sans\ Mono\ 11
     elseif s:os =~# 'mac'
         set guifont=FiraCode-Regular:h14
     else
@@ -118,7 +118,12 @@ else
         endif
     endif
     if s:os =~# 'lin'
-        "set t_te=[H[2J
+        if $TERM == 'alacritty'
+            execute "set t_8f=\e[38;2;%lu;%lu;%lum"
+            execute "set t_8b=\e[48;2;%lu;%lu;%lum"
+        else
+            "set t_te=[H[2J
+        endif
         if exists ("$TMUX_PANE")
             set notgc
         endif
