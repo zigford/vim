@@ -63,7 +63,9 @@ endif
 execute 'source ' . split(&rtp, ',')[0] . '/autoload/plug.vim'
 if exists('*plug#begin')
     call plug#begin(s:plug)        " Enable the following plugins
+    Plug 'airblade/vim-gitgutter'
     Plug 'tpope/vim-fugitive'
+    Plug 'benbusby/vim-earthbound-themes'
     Plug 'junegunn/gv.vim'
     Plug 'junegunn/vim-easy-align'
     Plug 'dhruvasagar/vim-table-mode'
@@ -80,6 +82,8 @@ if exists('*plug#begin')
     Plug 'osamuaoki/vim-spell-under'
     Plug '/usr/share/vim'
     Plug 'arouene/vim-ansible-vault'
+    Plug 'preservim/nerdtree'
+    Plug 'humanoid-colors/vim-humanoid-colorscheme'
     call plug#end()
 endif
 "set rtp+=/usr/local/opt/fzf
@@ -96,7 +100,7 @@ if has('gui_running')                         " Options for gvim only
         set columns=90                            " Set default amount of columns
     endif
     if s:os =~# 'lin'
-        set guifont=Droid\ Sans\ Mono\ 11
+        set guifont=Monospace\ 10
     elseif s:os =~# 'mac'
         set guifont=FiraCode-Regular:h14
     else
@@ -125,7 +129,9 @@ else
             "set t_te=[H[2J
         endif
         if exists ("$TMUX_PANE")
-            set notgc
+            let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+            let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
+            " set notgc
         endif
     endif
 endif
@@ -155,9 +161,10 @@ else
         set background=light
     endif
 endif
-let g:spell_under='gruvbox'
-"colorscheme dark_mode
+let g:spell_under='thread'
+colorscheme threed
 " }}}
+set background=dark
 
 " Default settings {{{
 
@@ -186,7 +193,7 @@ set wildignore+=**/node_modules/**
 set incsearch
 set viewoptions-=curdir
 set backspace=start,indent                           " allow backspace before insert
-set scrolloff=6
+set scrolloff=7
 
 " }}}
 
@@ -284,9 +291,9 @@ augroup END
 augroup JSON
     autocmd!
     autocmd BufRead *.json set ft=json
-    autocmd FileType json :execute ":%! python -m json.tool\r"
-    autocmd FileType json setlocal foldmethod=syntax shiftwidth=2 tabstop=2
-    autocmd FileType json nnoremap <localleader>f :%! python -m json.tool<CR>
+    " autocmd FileType json :execute ":%! python -m json.tool\r"
+    " autocmd FileType json setlocal foldmethod=syntax shiftwidth=2 tabstop=2
+    " autocmd FileType json nnoremap <localleader>f :%! python -m json.tool<CR>
 augroup END
 augroup email
     autocmd!
@@ -328,10 +335,10 @@ iabbrev powershell  PowerShell
 nnoremap <silent> <leader>s :call ToggleSyntax()<CR>|   " M
 nnoremap <silent> <leader>w :set wrap!<CR>
 nnoremap <silent> <leader>n :set number!<CR>
-nnoremap <leader>, ,|                         " remap leader+, to ,
+"nnoremap <leader>, ,|                         " remap leader+, to ,
 nnoremap <Space> <Nop>|
 inoremap <c-u> <esc>viwUwa|                   " Map Ctrl+u to uppercase current word in insertmode
-nnoremap <c-u> viwU|                          " Map Ctrl+u to uppercase current word in normalmode
+"nnoremap <c-U> viwU|                          " Map Ctrl+u to uppercase current word in normalmode
 nnoremap <leader>ev :vsplit $MYVIMRC<CR>|     " Edit VimRC in a v split
 nnoremap <leader>eV :e $MYVIMRC<CR>|          " Edit VimRC in fullscreen
 nnoremap <leader>cc :close<CR>                " Edit VimRC in a v split
@@ -353,7 +360,7 @@ nnoremap <leader>' viW<esc>a'<esc>hBi'<esc>lel
 xnoremap <leader>' <esc>`<i'<esc>`>la'<esc>
 inoremap <leader>~~ <esc>`<i~~<esc>`>la~~<esc>
 " enter mapped to nohlsearch
-nnoremap <silent> <cr> :nohlsearch<cr>
+nnoremap <silent> <leader><cr> :nohlsearch<cr>
 " disable arrows in normal mode
 noremap <Left> <nop>
 noremap <Right> <nop>
@@ -366,7 +373,7 @@ nnoremap <c-k> <c-w>k
 nnoremap <c-j> <c-w>j
 nnoremap <c-l> <c-w>l
 nnoremap <c-h> <c-w>h
-nnoremap <leader>,c <c-w>c
+"nnoremap <leader>,c <c-w>c
 nnoremap <leader>f :FZF<CR>
 " Usefull ale mappings
 nnoremap <leader>da :call ale#debugging#Info()<CR>
@@ -382,6 +389,13 @@ nnoremap <leader>p :call TogglePatchLine()<Cr>
 nnoremap <leader>> :cn<CR>
 nnoremap <leader>< :cp<CR>
 nnoremap <leader>vs :vs<CR>:call SetFileCount(2)<CR>
+nnoremap <F5> "=strftime("%c")<CR>P
+inoremap <F5> <C-R>=strftime("%c")<CR>
+nnoremap <leader>, :bp<cr>
+nnoremap <leader>. :bn<cr>
+nnoremap <leader>gw :Gw<cr>
+nnoremap <leader>gp :G push<cr>
+nnoremap <leader>gc :G commit<cr>
 "}}}
 
 " Custom functions {{{
@@ -412,6 +426,7 @@ let s:comment_map = {
     \   "ahk": ';',
     \   "vim": '"',
     \   "tex": '%',
+    \   "cfg": '#',
     \ }
 
 function! ToggleComment()
@@ -492,25 +507,6 @@ function! TogglePatchLine() abort
         normal dd
     endif
 endfunction
-
-function! YesNo() abort
-    let l:curline = getline(line('.'))
-    let l:cur_pos = getpos('.')
-    if len(l:curline)
-        normal! $b
-        let l:char = strcharpart(getline('.')[col('.') - 1:], 0, 1)
-        if l:char == ","
-            normal! ehhh
-            execute "normal! cwyes\<esc>"
-        elseif l:char == "y"
-            execute "normal! xxxi no\<esc>"
-        elseif l:char == "n"
-            execute "normal! dwi  \<esc>"
-        endif
-    endif
-    call setpos('.', l:cur_pos)
-endfunction
-nnoremap <leader>. :call YesNo()<CR>
 
 function! s:DiffWithSaved()
   let filetype=&ft
