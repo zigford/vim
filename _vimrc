@@ -50,6 +50,7 @@ let g:ale_set_quickfix = 1
 let g:ale_linter_aliases = {'ps1': 'powershell'}
 "let g:ale_linters = {'powershell': ['psscriptanalyzer']}
 let g:ale_linters = {'powershell': ['powershell','psscriptanalyzer']}
+let g:snipMate = { 'snippet_version' : 0 }                              " fix later
 if s:os=~#'win'
     let g:ale_powershell_psscriptanalyzer_executable = 'powershell.exe'
     let g:ale_powershell_powershell_executable = 'powershell.exe'
@@ -143,8 +144,12 @@ if filereadable("/home/harrisj/.config/vim/mode")
     let s:mode=system('cat /home/harrisj/.config/vim/mode')
     if s:mode =~ 'light' 
         set background=light
+        colorscheme humanoid
+        let g:spell_under='humanoid'
     else
         set background=dark
+        colorscheme threed
+        let g:spell_under='threed'
     endif
 else
     let s:time = has('win32') ? system('time /t') : system('date "+%I:%M %p"')
@@ -157,14 +162,15 @@ else
     \ (s:PM ==? 'AM' &&
     \ (s:hour < 8 || s:hour == 12))              " Between 8pm and 8am is night
         set background=dark
+        colorscheme threed
+        let g:spell_under='threed'
     else
         set background=light
+        colorscheme humanoid
+        let g:spell_under='humanoid'
     endif
 endif
-let g:spell_under='thread'
-colorscheme threed
 " }}}
-set background=dark
 
 " Default settings {{{
 
