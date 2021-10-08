@@ -198,8 +198,8 @@ set wildmenu
 set wildignore+=**/node_modules/**
 set incsearch
 set viewoptions-=curdir
-set backspace=start,indent                           " allow backspace before insert
-set scrolloff=7
+set backspace=start,indent,eol                " allow backspace before insert
+set scrolloff=6
 
 " }}}
 
@@ -359,6 +359,8 @@ inoremap jk <esc>
 vnoremap jk <esc>
 " inoremap <esc> <nop>
 vnoremap <esc> <nop>
+" surround current word in quotes
+nnoremap <leader>` viW<esc>a`<esc>hBi`<esc>lel
 " surround current word in quotes
 nnoremap <leader>" viW<esc>a"<esc>hBi"<esc>lel
 nnoremap <leader>' viW<esc>a'<esc>hBi'<esc>lel
