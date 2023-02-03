@@ -126,6 +126,11 @@ else
         if $TERM == 'alacritty'
             execute "set t_8f=\e[38;2;%lu;%lu;%lum"
             execute "set t_8b=\e[48;2;%lu;%lu;%lum"
+        elseif $TERM == 'foot'
+            execute "set t_8f=\e[38;2;%lu;%lu;%lum"
+            execute "set t_8b=\e[48;2;%lu;%lu;%lum"
+            execute "set t_TI=\e[>4;2m"
+            execute "set t_TE=\e[>4;m"
         else
             "set t_te=[H[2J
         endif
