@@ -343,6 +343,8 @@ iabbrev powershell  PowerShell
 "}}}
 
 " Mappings {{{
+" Sudo force override file
+cnoremap w!! execute 'silent! write !sudo tee % >/dev/null' <bar> edit!
 nnoremap <silent> <leader>s :call ToggleSyntax()<CR>|   " M
 nnoremap <silent> <leader>w :set wrap!<CR>
 nnoremap <silent> <leader>n :set number!<CR>
