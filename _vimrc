@@ -93,7 +93,7 @@ endif
 
 " Look and feel {{{
 if has('gui_running')                         " Options for gvim only
-    "set guioptions -=m                        " Disable menubar
+    set guioptions -=m                        " Disable menubar
     set guioptions -=T                        " Disable Status bar
     if ! exists("g:linesset")
         let g:linesset = "yes"
@@ -146,14 +146,14 @@ endif
 " time of day
 
 if filereadable("/home/harrisj/.config/vim/mode")
-    let s:mode=system('cat /home/harrisj/.config/vim/mode')
-    if s:mode =~ 'light' 
+    let s:mode=system('gsettings get org.gnome.desktop.interface color-scheme')
+    if s:mode =~ 'default' 
         set background=light
         colorscheme humanoid
         let g:spell_under='humanoid'
     else
         set background=dark
-        colorscheme threed
+        colorscheme humanoid
         let g:spell_under='threed'
     endif
 else
@@ -411,6 +411,9 @@ nnoremap <leader>. :bn<cr>
 nnoremap <leader>gw :Gw<cr>
 nnoremap <leader>gp :G push<cr>
 nnoremap <leader>gc :G commit<cr>
+nnoremap <leader>dg :diffget<cr>
+nnoremap <leader>dp :diffput<cr>
+set pastetoggle=<XF86Launch8>
 "}}}
 
 " Custom functions {{{
