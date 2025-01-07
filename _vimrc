@@ -117,9 +117,15 @@ if has('gui_running')                         " Options for gvim only
 else
     set mouse=a
     if has('termguicolors')
-        if s:os !~# 'mac'
+        if s:os =~# 'mac'
+            if $TERM_PROGRAM == 'Apple_Terminal'
+                set notgc
+            elseif $TERM_PROGRAM == 'iTerm.app'
             " tgc doesn't seem to work in terminal.app
-            set termguicolors
+                set termguicolors
+                let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+                let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
+            endif
         endif
     endif
     if s:os =~# 'lin'
