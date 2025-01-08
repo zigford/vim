@@ -83,6 +83,7 @@ if exists('*plug#begin')
     Plug 'osamuaoki/vim-spell-under'
     Plug '/usr/share/vim'
     Plug 'arouene/vim-ansible-vault'
+    Plug 'github/copilot.vim'
     Plug 'preservim/nerdtree'
     Plug 'humanoid-colors/vim-humanoid-colorscheme'
     call plug#end()
