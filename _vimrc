@@ -420,6 +420,9 @@ nnoremap <leader>gp :G push<cr>
 nnoremap <leader>gc :G commit<cr>
 nnoremap <leader>dg :diffget<cr>
 nnoremap <leader>dp :diffput<cr>
+nnoremap <leader>vw :Vimwiki2HTMLBrowse<cr>
+nnoremap <leader>uu :r!uuidgen<CR>kJ
+inoremap <leader>uu <ESC>:r!uuidgen<CR>kJA
 set pastetoggle=<XF86Launch8>
 "}}}
 
@@ -474,6 +477,11 @@ function! ToggleComment()
     end
 endfunction
 
+function! GenPasswd()
+    let c = system('tr -dc ''A-Za-z0-9!\"#$%&''\''''()*+,-./:;<=>?@[\]^_{|}~'' < /dev/urandom | head -c 14; echo')
+    call append(line('.'), split(c, "\n"))
+endfunction
+nnoremap <leader>gp :call GenPasswd()<cr>
 
 nnoremap <leader><Space> :call ToggleComment()<cr>
 vnoremap <leader><Space> :call ToggleComment()<cr>
